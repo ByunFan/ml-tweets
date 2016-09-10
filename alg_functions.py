@@ -19,6 +19,20 @@ def vectorise(following_list, data, best_words_list):
 	return X, y
 
 
+def data_norm(X_train, X_val):
+	mean_values = np.mean(X_train, axis=0)
+	X_train -= mean_values
+	X_val -= mean_values
+	
+	variance = np.var(X_train, axis=0)
+	X_train /= variance
+	X_val /= variance
+	
+	X_train = np.hstack([X_train, np.ones((X_train.shape[0], 1))])
+	X_val = np.hstack([X_val, np.ones((X_val.shape[0], 1))])
+	return X_train, X_val
+
+
 def loss_calc(X, y, W, reg):
 	scores = X.dot(W)
 	correct_scores = scores[np.arange(X.shape[0]), y]
