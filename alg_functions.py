@@ -18,7 +18,7 @@ def vectorise(following_list, data, best_words_list):
 
 def loss_calc(X, y, W, reg):
 	scores = X.dot(W)
-	correct_scores = scores[np.arange(X.shape[0]), y-1]
+	correct_scores = scores[np.arange(X.shape[0]), y]
 	scores -= np.reshape(correct_scores, (-1,1))
 	scores = np.maximum(scores + 1, 0)
 	loss_lines = np.sum(scores, axis=1) - 1
@@ -28,12 +28,12 @@ def loss_calc(X, y, W, reg):
 
 def grad_calc(X, y, W, reg):
 	scores = X.dot(W)
-	correct_scores = scores[np.arange(X.shape[0]), y-1]
+	correct_scores = scores[np.arange(X.shape[0]), y]
 	scores -= np.reshape(correct_scores, (-1,1))
 	scores = np.maximum(scores + 1, 0)
 	scores = np.nan_to_num(scores / scores)
 	sum_bin = np.sum(scores, axis=1)
-	scores[np.arange(X.shape[0]),y-1] -= sum_bin
+	scores[np.arange(X.shape[0]),y] -= sum_bin
 	dW = X.T.dot(scores)
 	dW /= X.shape[0]
 	dW += reg * W

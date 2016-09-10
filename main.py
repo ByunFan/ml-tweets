@@ -24,10 +24,14 @@ mean_values = np.mean(X_train, axis=0)
 X_train -= mean_values
 X_val -= mean_values
 
+variance = np.var(X_train, axis=0)
+X_train /= variance
+X_val /= variance
+
 X_train = np.hstack([X_train, np.ones((X_train.shape[0], 1))])
 X_val = np.hstack([X_val, np.ones((X_val.shape[0], 1))])
 
-learning_rate = 0.0001
+learning_rate = 0.001
 reg = 0.01
 num_iters = 2000
 batch_size = 500
@@ -45,3 +49,7 @@ for i in range(num_iters):
 		print 'iteration %d / %d: loss %f' % (i, num_iters, loss)
 
 plt.plot(loss_history)
+y_train_pred = np.argmax(X_train.dot(W), axis=1)
+y_val_pred = np.argmax(X_val.dot(W), axis=1)
+print 'training accuracy: %f' % (np.mean(y_train == y_train_pred), )
+print 'validation accuracy: %f' % (np.mean(y_val == y_val_pred), )
