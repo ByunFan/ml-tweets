@@ -2,9 +2,8 @@
 
 from loader import load_data
 from vocab import get_n_best_words
-from alg_functions import vectorise, loss_calc, grad_calc
+from alg_functions import vectorise, svm_train, evaluate
 import numpy as np
-from matplotlib import pyplot as plt
 num_user_tweets = 200
 num_val_tweets = 500
 
@@ -35,21 +34,27 @@ learning_rate = 0.001
 reg = 0.01
 num_iters = 2000
 batch_size = 500
-W = 0.001 * np.random.randn(relevant_words_count+2, num_following)
-loss_history = []
-for i in range(num_iters):
-	indices = np.random.choice(num_train, batch_size)
-	X_batch = X_train[indices]
-	y_batch = y_train[indices]
-	loss = loss_calc(X_batch, y_batch, W, reg)
-	grad = grad_calc(X_batch, y_batch, W, reg)
-	loss_history.append(loss)
-	W -= learning_rate*grad
-	if i % 100 == 0:
-		print 'iteration %d / %d: loss %f' % (i, num_iters, loss)
 
-plt.plot(loss_history)
-y_train_pred = np.argmax(X_train.dot(W), axis=1)
-y_val_pred = np.argmax(X_val.dot(W), axis=1)
-print 'training accuracy: %f' % (np.mean(y_train == y_train_pred), )
-print 'validation accuracy: %f' % (np.mean(y_val == y_val_pred), )
+W = svm_train(X_train, y_train, num_iters, batch_size, reg, learning_rate)
+
+evaluate(X_train, y_train, W, 'Training')
+evaluate(X_val, y_val, W, 'Validation')
+
+ics = np.random.choice(num_val, 1)
+for i in ics:
+	print val_data[i]
+	#print following_list[y_val_pred[i]]
+	
+	
+ixs = np.random.choice(num_following, 1)
+for i in ixs:
+	i = 18
+	print following_list[i]
+	col = W[:,i]
+	args = col.argsort()[-10:][::-1]
+	for arg in args:
+		print best_words_list[arg]
+	print ' - - -'
+	args = col.argsort()[:10][::1]
+	for arg in args:
+		print best_words_list[arg]
